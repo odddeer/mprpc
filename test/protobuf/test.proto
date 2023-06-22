@@ -1,0 +1,61 @@
+syntax = "proto3"; //声明protobuf的版本
+
+package fixbug;//声明proto生成的c++代码所在的包(生成代码用该命名空间，即C++中的namespace)
+
+//protobuf中的这些数据类型是其自身的，不属于其他语言，虽然为了能读有些一致
+
+//定义登录消息类型 要输入的字段体包括    name pwd
+message LoginRequest
+{
+    string name=1;//代表name是第一个字段
+    string pwd=2;//代表pwd是第二个字段
+}
+
+// 定义登录响应消息类型
+message LoginResponse
+{
+//    int32 errcode = 1;// 类型：int32 名称：错误码 = 返回的第一个字段
+//    string errmsg = 2;// 类型：string 名称：错误消息 = 返回的第二个字段
+    ResultCode result=1;
+    bool success =2;// 类型： bool 名称：success否？ = 返回的第三个字段
+}
+
+message ResultCode
+{//定义一个返回码类，来回传错误码和错误信息
+  int32 errcode = 1;
+  bytes errmsg = 2;
+}
+
+message GetFriendListsRequest
+{
+  uint32 userid =1;//写一个用户id供功能服务器查找朋友列表
+}
+
+message User
+{//朋友类信息要求什么
+  bytes name=1;//姓名
+  uint32 age=2;//年龄
+  enum Sex
+  {
+    MAN=0;
+    WOMAN=1;
+  }
+  Sex sex=3;//性别
+}
+
+message GetFriendListResponse
+{
+  ResultCode result = 1;//返回的错误码，错误信息
+  //repeated 把值传递变成值的列表传递
+  repeated User friend_list = 2;//返回的对象列表
+}
+
+// 定义下面选项，表示生成service服务类和rpc方法描述，默认不生成
+option cc_generic_services = true;
+
+//在protobuf里面怎么定义描述rpc方法的类型 - service
+service UserServiceRpc
+{
+  rpc Login(LoginRequest) returns(LoginResponse);
+  rpc GetFriendLists(GetFriendListsRequest) returns(GetFriendListResponse);
+}

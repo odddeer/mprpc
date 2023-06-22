@@ -1,0 +1,1 @@
+/usr/bin/g++   -g   CMakeFiles/xx.dir/user.pb.cc.o  -o ../../bin/xx  -L/home/kent/mprpc/lib  -L/usr/local/lib -rdynamic 
